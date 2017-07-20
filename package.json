@@ -1,0 +1,16 @@
+{
+  "name": "lynda-downloader",
+  "version": "1.0.1",
+  "description": "Downloads lynda.com videos",
+  "main": "app",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Peter Forgacs <peter.forgacs3@gmail.com> (http://peterforgacs.github.io)",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^4.0.0",
+    "minimist": "^1.2.0",
+    "url-parse": "^1.1.9"
+  }
+}
