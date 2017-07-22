@@ -3,8 +3,7 @@
   "version": "1.0.1",
   "description": "Downloads lynda.com videos",
   "main": "app",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Peter Forgacs <peter.forgacs3@gmail.com> (http://peterforgacs.github.io)",
   "license": "MIT",
   "dependencies": {

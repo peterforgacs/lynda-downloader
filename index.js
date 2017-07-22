@@ -11,7 +11,7 @@ const spawn 	 = require('child_process').spawn;
 *   In case its used as a standalone program.
 *------------------------------------------------------------------*/
 if (!argv.urls || !argv.username || !argv.password){
-	console.log('Missing arguments: node app --username=xxx --password=xxx --url=url');
+	console.log('Missing arguments: lyndadl --username=xxx --password=xxx --url=url');
 	process.exit(1);
 }
 
