@@ -1,23 +1,86 @@
+#!/usr/bin/env node
 'use strict';
 const fs	     = require('fs');
 const fsx   	 = require('fs-extra');
+const clear		 = require('clear');
+const figlet     = require('figlet');
+const chalk      = require('chalk');
 const argv       = require('minimist')(process.argv.slice(2));
+var inquirer     = require('inquirer');
 const parse      = require('url-parse');
 const path       = require('path');
-const exec 		 = require('child_process').exec;
 const spawn 	 = require('child_process').spawn;
 
-/*---- Validate ---------------------------------------------------
-*   In case its used as a standalone program.
-*------------------------------------------------------------------*/
-if (!argv.urls || !argv.username || !argv.password){
-	console.log('Missing arguments: lyndadl --username=xxx --password=xxx --url=url');
-	process.exit(1);
-}
+/*---- Command line -----------------------------------------------------------
+*  Various command line tweaks
+-------------------------------------------------------------------------------*/
+clear();
+console.log(
+  chalk.yellow(
+    figlet.textSync('Lynda Downloader', { horizontalLayout: 'full' })
+  )
+);
 
+/*---- Validate ---------------------------------------------------------------
+*   In case its used as a standalone program.
+*-----------------------------------------------------------------------------*/
 let baseDir = process.cwd();	// The path the process is being called on
 if (argv.download){
 	baseDir = argv.download;
+}
+
+if (!argv.urls || !argv.username || !argv.password){
+	interactivePrompt( credentials => {
+		argv.username = credentials.username;
+		argv.password = credentials.password;
+		argv.urls = credentials.urls;
+		downThemAll();
+	});
+} else {
+	downThemAll();
+}
+
+function interactivePrompt(callback){
+	var questions = [
+    {
+      name: 'username',
+      type: 'input',
+      message: 'Enter your Lynda.com username or e-mail address:',
+      validate: function( value ) {
+        if (value.length) {
+          return true;
+        } else {
+          return 'Please enter your username or e-mail address';
+        }
+      }
+    },
+    {
+      name: 'password',
+      type: 'password',
+      message: 'Enter your Lynda.com password:',
+      validate: function(value) {
+        if (value.length) {
+          return true;
+        } else {
+          return 'Please enter your password';
+        }
+      }
+	},
+	{
+      name: 'urls',
+      type: 'input',
+      message: 'Enter the path to the file that stores the urls:',
+      validate: function(value) {
+        if (value.length) {
+          return true;
+        } else {
+          return 'Please enter your password';
+        }
+      }
+    }
+  ];
+
+  inquirer.prompt(questions).then(callback);
 }
 
 module.exports = class LyndaDownloader {
@@ -120,12 +183,14 @@ module.exports = class LyndaDownloader {
 /*---- Example ----------------------------------------------------
 *   Test download run.
 *-------------------------------------------------------------------*/
-let run = new module.exports(argv.username, argv.password);
-run.setUrl(argv.urls)
-.then( () => {
-   run.start();
-})
-.catch( error => {
-   console.log(error);
-   process.exit(1);
-});
+function downThemAll(){
+	let run = new module.exports(argv.username, argv.password);
+	run.setUrl(argv.urls)
+	.then( () => {
+		run.start();
+	})
+	.catch( error => {
+		console.log(error);
+		process.exit(1);
+	});
+}

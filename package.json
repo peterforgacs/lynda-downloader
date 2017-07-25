@@ -3,11 +3,17 @@
   "version": "1.0.1",
   "description": "Downloads lynda.com videos",
   "main": "app",
-  "scripts": {},
+  "scripts": {
+    "start": "node index"
+  },
   "author": "Peter Forgacs <peter.forgacs3@gmail.com> (http://peterforgacs.github.io)",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.0.1",
+    "clear": "0.0.1",
+    "figlet": "^1.2.0",
     "fs-extra": "^4.0.0",
+    "inquirer": "^3.2.1",
     "minimist": "^1.2.0",
     "url-parse": "^1.1.9"
   }
