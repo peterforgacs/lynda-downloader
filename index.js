@@ -1,15 +1,29 @@
 #!/usr/bin/env node
 'use strict';
-const fs	     = require('fs');
-const fsx   	 = require('fs-extra');
-const clear		 = require('clear');
-const figlet     = require('figlet');
-const chalk      = require('chalk');
-const argv       = require('minimist')(process.argv.slice(2));
-var inquirer     = require('inquirer');
-const parse      = require('url-parse');
-const path       = require('path');
-const spawn 	 = require('child_process').spawn;
+const fs  = require('fs'),
+fsx   	  = require('fs-extra'),
+clear		  = require('clear'),
+figlet    = require('figlet'),
+chalk     = require('chalk'),
+argv      = require('minimist')(process.argv.slice(2)),
+inquirer  = require('inquirer'),
+parse     = require('url-parse'),
+path      = require('path'),
+program   = require('commander'),
+pkginfo   = require('pkginfo')(module),
+spawn 	  = require('child_process').spawn;
+
+/*---- Arguments --------------------------------------------------------------
+*  Show help and parse arguments
+-------------------------------------------------------------------------------*/
+program
+  .version(pkginfo.version)
+  .option('-u, --username', 'lynda.com username')
+  .option('-p, --password', 'lynda.com password')
+	.option('-U, --url', 'lynda.com url')
+	.option('-f, --file', 'file containing lynda.com urls')
+  .parse(process.argv);
+
 
 /*---- Command line -----------------------------------------------------------
 *  Various command line tweaks
@@ -68,13 +82,13 @@ function interactivePrompt(callback){
 	},
 	{
       name: 'urls',
-      type: 'input',
-      message: 'Enter the path to the file that stores the urls:',
+      type: 'choice',
+      message: 'URL type:',
       validate: function(value) {
         if (value.length) {
           return true;
         } else {
-          return 'Please enter your password';
+          return 'Please the correct filename';
         }
       }
     }
