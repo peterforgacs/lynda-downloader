@@ -12,6 +12,9 @@
   },
   "author": "Peter Forgacs <peter.forgacs3@gmail.com> (http://peterforgacs.github.io)",
   "license": "MIT",
+  "keywords": [
+    "lynda", "lynda.com"
+  ],
   "dependencies": {
     "chalk": "^2.0.1",
     "clear": "0.0.1",
