@@ -1,61 +1,31 @@
 #!/usr/bin/env node
 
 'use strict';
-const fs = require('fs'),
-    fsx = require('fs-extra'),
-    clear = require('clear'),
-    figlet = require('figlet'),
-    chalk = require('chalk'),
+const fs     = require('fs'),
+    fsx      = require('fs-extra'),
+    clear    = require('clear'),
+    figlet   = require('figlet'),
+    chalk    = require('chalk'),
     inquirer = require('inquirer'),
-    parse = require('url-parse'),
-    path = require('path'),
-    program = require('commander'),
-    pkginfo = require('pkginfo')(module, { include: ['version'] }),
-    spawn = require('child_process').spawn;
-Error.stackTraceLimit = Infinity;
-/*---- Arguments --------------------------------------------------------------
-*  Show help and parse arguments
+    parse    = require('url-parse'),
+    path     = require('path'),
+    program  = require('commander'),
+    pkginfo  = require('pkginfo')(module, { include: ['version'] }),
+    spawn    = require('child_process').spawn;
+
+/*---- Enviroment --------------------------------------------------------------
+*  Enviroment based changes
 -------------------------------------------------------------------------------*/
-
-program
-    .version(module.exports.version)
-    .usage('-u <username> -p <password> -U [<filename> | <URL>]')
-    .option('-u, --username', 'lynda.com username')
-    .option('-p, --password', 'lynda.com password')
-    .option('-d, --download', 'download location', doesExist, process.cwd())
-    .option('-U, --url', 'lynda.com url or file path contianing urls', whichMode)
-    .parse(process.argv);
-
-/*---- Command line -----------------------------------------------------------
-*  Various command line tweaks
--------------------------------------------------------------------------------*/
-clear();
-console.log(
-    chalk.yellow(
-        figlet.textSync('Lynda Downloader', { horizontalLayout: 'full' })
-    )
-);
-
-/*---- Validate ---------------------------------------------------------------
- *   In case its used as a standalone program.
- *-----------------------------------------------------------------------------*/
-if (!program.url || !program.username || !program.password) {
-    interact();
-} else {
-    downThemAll();
-}
-
-function interact() {
-    interactivePrompt(credentials => {
-        program.username = credentials.username;
-        program.password = credentials.password;
-        program.url = credentials.url;
-        program.download = credentials.download;
-        downThemAll();
-    });
+if (process.env.debug){
+    console.log('Debug mode.');
+    Error.stackTraceLimit = Infinity;
 }
 
 function doesExist(input, current) {
+    if (!input) {
+        return current;
+    }
+
     let dir = input;
 
     if (!path.isAbsolute(input)) {
@@ -76,16 +46,19 @@ function doesExist(input, current) {
         });
 }
 
-function whichMode(input) {
+function whichMode(input, someother) {
     if (isUrl(input)) {
         program.mode = 'url';
-        return input;
+        return true;
+        //return input;
     } else if (isFile(input)) {
         program.mode = 'file';
-        return input;
+        //return input;
+        return true;
     } else {
         console.error('Invalid url argument.');
-        interact();
+        //interact();
+        return false;
     }
 }
 
@@ -95,9 +68,9 @@ function isFile(file) {
         return fs.existsSync(file);
     }
 
-    console.log(process.cwd() + file);
-    console.log(fs.existsSync(process.cwd() + file), 'Relative exists state');
-    return fs.existsSync(process.cwd() + file);
+    console.log(process.cwd() + '/' + file);
+    console.log(fs.existsSync(process.cwd() + '/' + file), 'Relative exists state');
+    return fs.existsSync(process.cwd() + '/' + file);
 }
 
 function isUrl(subject) {
@@ -107,6 +80,39 @@ function isUrl(subject) {
     }
 
     return false;
+}
+
+/*---- Commander --------------------------------------------------------------
+*  Show help and parse arguments
+-------------------------------------------------------------------------------*/
+program
+    .version(module.exports.version)
+    .usage('-u <username> -p <password> -U [<filename> | <URL>]')
+    .option('-u, --username', 'lynda.com username')
+    .option('-p, --password', 'lynda.com password')
+    .option('-d, --download', 'download location', (input) => { 
+        doesExist(input, process.cwd());
+     })
+    .option('-U, --url', 'lynda.com url or file path contianing urls', whichMode, 'something')
+    .parse(process.argv);
+
+/*---- Command line -----------------------------------------------------------
+*  Fullscreen mode
+-------------------------------------------------------------------------------*/
+clear();
+console.log(
+    chalk.yellow(
+        figlet.textSync('Lynda Downloader', { horizontalLayout: 'full' })
+    )
+);
+
+/*---- Logic ------------------------------------------------------------------
+ *   Use the given commnand line options or start interactive mode
+ *-----------------------------------------------------------------------------*/
+if (!program.url || !program.username || !program.password) {
+    interact();
+} else {
+    downThemAll();
 }
 
 function interactivePrompt(callback) {
@@ -136,19 +142,45 @@ function interactivePrompt(callback) {
         },
         {
             name: 'url',
-            type: 'choice',
-            message: 'URL type:',
+            type: 'input',
+            message: 'The url of the course or path to the file containing multiple courses:',
             validate: function(value) {
-                if (value.length) {
+                if (value.length && whichMode(value)) {
                     return true;
                 } else {
-                    return 'Please the correct filename';
+                    return 'Please enter a valid url or path.';
+                }
+            }
+        },
+        {
+            name: 'download',
+            type: 'input',
+            message: 'Download location:',
+            default: function () {
+                return process.cwd();
+            },
+            validate: function(value) {
+                if (value.length) {
+                    doesExist(value, process.cwd());
+                    return true;
+                } else {
+                    return 'Please enter a valid url or path.';
                 }
             }
         }
     ];
 
     inquirer.prompt(questions).then(callback);
+}
+
+function interact() {
+    interactivePrompt(credentials => {
+        program.username = credentials.username;
+        program.password = credentials.password;
+        program.url = credentials.url;
+        program.download = credentials.download;
+        downThemAll();
+    });
 }
 
 class LyndaDownloader {

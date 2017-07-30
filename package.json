@@ -2,7 +2,7 @@
   "name": "lyndadl",
   "version": "1.2.0",
   "description": "Downloads lynda.com videos",
-  "main": "app",
+  "main": "index",
   "scripts": {
     "start": "node index",
     "test": "node_modules/.bin/mocha"
