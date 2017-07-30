@@ -4,7 +4,7 @@ CLI tool for downloading lynda.com videos.
 
 ## Dependencies
 
-You need to have youtube downloader installed and in path.
+You need to have the latest youtube downloader (2017.07.15) installed and in path.
 
 https://youtube-dl.org/
 
