@@ -1,6 +1,6 @@
 # lynda-dl
 
-CLI tool for downloading lynda.com videos.
+CLI tool for downloading lynda.com courses.
 Alpha version, beware!
 
 ## Dependencies
@@ -21,5 +21,11 @@ npm install lynda-dl -g
 lynda-dl
 ```
 
-You can specify a lynda.com course url or a file containing course urls.
-You can specify a download location.
+During the prompt you can specify:
+* Your lynda.com username
+* Your lynda.com password
+* A course url or a file containing multiple course urls
+* Download location
+
+The username and password does not get saved.
+The full course gets downloaded with subtitles.
