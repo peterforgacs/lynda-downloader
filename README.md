@@ -1,6 +1,7 @@
 # lynda-dl
 
 CLI tool for downloading lynda.com videos.
+Alpha version, beware!
 
 ## Dependencies
 
