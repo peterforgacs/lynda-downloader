@@ -16,6 +16,10 @@
     "lynda",
     "lynda.com"
   ],
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/peterforgacs/lynda-downloader.git"
+  },
   "dependencies": {
     "chalk": "^2.0.1",
     "clear": "0.0.1",
