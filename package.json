@@ -23,7 +23,7 @@
   "dependencies": {
     "chalk": "^2.0.1",
     "clear": "0.1.0",
-    "commander": "^3.0.0",
+    "commander": "^4.1.0",
     "figlet": "^1.2.0",
     "fs-extra": "^8.1.0",
     "inquirer": "^7.0.0",
